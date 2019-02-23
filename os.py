@@ -4,6 +4,7 @@ import subprocess
 
 import numpy
 
+f = open("2.txt","w+")
 if sys.platform[:3] == 'win':
     import msvcrt
     def getkey():
@@ -44,7 +45,8 @@ vely = 1
 
 
 
-def write(y = 0, x = 0, p = numpy.chararray((y, x))):
+def write(y = 0, x = 0, p = numpy.chararray((y, x)), op = ""):
+	f = open(op,"w+")
     t = ""
     ins = []
     yp = 0
@@ -55,7 +57,14 @@ def write(y = 0, x = 0, p = numpy.chararray((y, x))):
 	print(zip(*numpy.where(p == "#")))
 	ins = zip(*numpy.where(p == "#"))
 	for i in ins:
-	    print i
+		y = ""
+		x = ""
+		y = int(i[0]) - 7
+		x = int(i[1]) - 7
+		d = str(1) + "," + str(y) + ":" + str(x) + "!"
+		print(d)
+		f.write(d)
+	f.close()
     sys.exit()
 
 
@@ -93,15 +102,12 @@ if sys.platform[:3] == 'lin':
 #	os.system("echo " + c)
 
 temp = "0"
-last = "0"
-
+#numpy.chararray((yd, xd))
+last = numpy.chararray((yd, xd))
+last[:] = "0"
 while done == 0:
-	if temp == "#" and last != "#":
-	    temp = 0
-	pg[y, x] = temp
-	if last == "#":
-	    pg[y, x] = "#"
-	    last = "p"
+	
+	pg[y, x] = last[y, x]
 	
 	round = round + 1
 	if round >= 4:
@@ -112,14 +118,16 @@ while done == 0:
 	print(s)
 	temp = pg[y, x]
 	if sys.platform[:3] == 'win':
-		s = s[2]
+		s = s[0]
 	if sys.platform[:3] == 'lin':
 		s = s[0]
 #	print(s)
 	
 	if s == "x":
 		done = 1
-	
+	elif s == "l":
+		pg[y, x] = last[y, x]
+		write(yd, xd, pg, "2.txt")
 	if s == "w":
 		y = y - 1
 	elif s == "s":
@@ -128,10 +136,9 @@ while done == 0:
 		x = x - 1
 	elif s == "d":
 		x = x + 1
-	elif s == "l":
-		write(yd, xd, pg)
-	if s == "r" and temp != "#":
-		last = "#"
+	
+	if s == "r":
+		last[y, x] = "#"
 	if x < 0:
 		x = 0
 	if x > xd - 1:
@@ -151,5 +158,5 @@ while done == 0:
 	update(str(pg))
 	print(str(input_char))
 	print(vely)
-	print(last)
+
 input("exit code(" + str(done) + "), please press ENTER to teminate...")
